@@ -1,6 +1,7 @@
 import struct
 from asyncio import StreamReader, StreamWriter
 
+from app.context import AppContext
 from app.dto import Header
 
 
@@ -30,5 +31,9 @@ class Session:
                 header = await self.read_exactly(12)
                 hdr = Header(*struct.unpack('>iii', header))
                 body = await self.read_exactly(hdr.size)
+                AppContext.logger.info(body.decode('utf-8'))
+                self.writer.write(body)
+                await self.writer.drain()
             except EOFError:
-                pass
+                AppContext.logger.info('eof')
+                break

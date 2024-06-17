@@ -1,6 +1,7 @@
 import asyncio
 from asyncio import StreamReader, StreamWriter
 
+from app.context import AppContext
 from app.session import Session
 
 
@@ -11,12 +12,13 @@ class Server:
         session = Session(reader, writer)
         await session.handle_event()
 
-    async def run(self):
+    @classmethod
+    async def run(cls):
         server = await asyncio.start_server(
             Server.handle_client,
-            '0.0.0.0',
-            7544
+            AppContext.config.app_host,
+            AppContext.config.app_port
         )
-        print(f'Serving on {server.sockets[0].getsockname()}')
+        AppContext.logger.info(f'Serving on {server.sockets[0].getsockname()}')
         async with server:
             await server.serve_forever()

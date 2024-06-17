@@ -3,9 +3,8 @@ import struct
 from unittest.mock import MagicMock
 
 import pytest
-import pytest_asyncio
 
-from app.main import read_exactly
+from main import read_exactly
 
 
 @pytest.mark.asyncio
